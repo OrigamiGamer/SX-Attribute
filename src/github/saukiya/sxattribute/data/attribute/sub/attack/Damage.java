@@ -2,8 +2,8 @@ package github.saukiya.sxattribute.data.attribute.sub.attack;
 
 import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.PreLoadItem;
-import github.saukiya.sxattribute.data.attribute.SXAttributeData;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
+import github.saukiya.sxattribute.data.attribute.SXAttributeData;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.condition.EquipmentType;
 import github.saukiya.sxattribute.data.eventdata.EventData;
@@ -23,7 +23,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.SpigotConfig;
 
 import java.util.Arrays;
@@ -31,6 +30,13 @@ import java.util.List;
 
 /**
  * 伤害
+ * <p>
+ * double[0] 伤害最小值
+ * double[1] 伤害最大值
+ * double[2] 伤害最小值 - PVP
+ * double[3] 伤害最大值 - PVP
+ * double[4] 伤害最小值 - PVE
+ * double[5] 伤害最大值 - PVE
  *
  * @author Saukiya
  */
@@ -43,16 +49,8 @@ public class Damage extends SubAttribute {
     @Getter
     private static final int TYPE_PVE = 2;
 
-    /**
-     * double[0] 伤害最小值
-     * double[1] 伤害最大值
-     * double[2] 伤害最小值 - PVP
-     * double[3] 伤害最大值 - PVP
-     * double[4] 伤害最小值 - PVE
-     * double[5] 伤害最大值 - PVE
-     */
-    public Damage(JavaPlugin plugin) {
-        super(plugin, 6, AttributeType.ATTACK, AttributeType.UPDATE);
+    public Damage() {
+        super(SXAttribute.getInst(), 6, AttributeType.ATTACK, AttributeType.UPDATE);
     }
 
     @Override
@@ -87,7 +85,7 @@ public class Damage extends SubAttribute {
                 ItemStack mainHand = SXAttribute.getVersionSplit()[1] > 8 ? eq.getItemInMainHand() : eq.getItemInHand();
                 if (mainHand != null) {
                     if (MaterialControl.BOW.parse().equals(mainHand.getType()) && !Config.isBowCloseRangeAttack()) {
-                        SXAttributeData sxAttributeData = SXAttribute.getAPI().loadItemData(attackEntity, new PreLoadItem(EquipmentType.MAIN_HAND, mainHand));
+                        SXAttributeData sxAttributeData = SXAttribute.getApi().loadItemData(attackEntity, new PreLoadItem(EquipmentType.MAIN_HAND, mainHand));
 
                         if (SXAttribute.getVersionSplit()[1] > 8) {
                             damageData.setDamage(event.getDamage() - (values[0] / event.getDamage() * sxAttributeData.getValues(getClass().getSimpleName())[0]));

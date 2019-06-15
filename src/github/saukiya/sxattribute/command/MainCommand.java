@@ -23,10 +23,7 @@ import java.util.stream.Collectors;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
-    private final SXAttribute plugin;
-
-    public MainCommand(SXAttribute plugin) {
-        this.plugin = plugin;
+    public MainCommand() {
         new StatsCommand().registerCommand();
         new RepairCommand().registerCommand();
         new SellCommand().registerCommand();
@@ -39,8 +36,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     public void setup(String command) {
-        plugin.getCommand(command).setExecutor(this);
-        plugin.getCommand(command).setTabCompleter(this);
+        SXAttribute.getInst().getCommand(command).setExecutor(this);
+        SXAttribute.getInst().getCommand(command).setTabCompleter(this);
         SubCommand.commands.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, SXAttribute.getInst()));
         SXAttribute.getInst().getLogger().info("Loaded " + SubCommand.commands.size() + " Commands");
     }
@@ -54,13 +51,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command arg1, String label, String[] args) {
         SenderType type = getType(sender);
         if (args.length == 0) {
-            sender.sendMessage("§0-§8 --§7 ---§c ----§4 -----§b SX-Attribute§4 -----§c ----§7 ---§8 --§0 - §0Author Saukiya");
+            sender.sendMessage("\n§0-§8 --§7 ---§c ----§4 -----§b SX-Attribute§4 -----§c ----§7 ---§8 --§0 - §0Author Saukiya");
             for (int i = 0; i < SubCommand.commands.size(); i++) {
                 SubCommand sub = SubCommand.commands.get(i);
                 if (sub.isUse(sender, type) && !sub.hide) {
                     Message.Tool.sendTextComponent(sender, Message.Tool.getTextComponent((i % 2 == 0 ? "" : "§7") + MessageFormat.format("/{0} {1}{2}§7 -§c {3}", label, sub.cmd, sub.arg, sub.getIntroduction()), MessageFormat.format("/{0} {1}", label, sub.cmd), sender.isOp() ? "§8§oPermission: " + sub.permission() : null));
                 }
             }
+            sender.sendMessage("");
             return true;
         }
         for (SubCommand sub : SubCommand.commands) {
@@ -68,7 +66,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 if (!sub.isUse(sender, type)) {
                     sender.sendMessage(Message.getMsg(Message.ADMIN__NO_PERMISSION_CMD));
                 } else {
-                    sub.onCommand(plugin, sender, args);
+                    sub.onCommand(sender, args);
                 }
                 return true;
             }
@@ -80,6 +78,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         SenderType type = getType(sender);
-        return args.length == 1 ? SubCommand.commands.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : SubCommand.commands.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0])).findFirst().filter(sub -> sub.isUse(sender, type)).map(sub -> sub.onTabComplete(plugin, sender, args)).orElse(null);
+        return args.length == 1 ? SubCommand.commands.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : SubCommand.commands.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0])).findFirst().filter(sub -> sub.isUse(sender, type)).map(sub -> sub.onTabComplete(sender, args)).orElse(null);
     }
 }

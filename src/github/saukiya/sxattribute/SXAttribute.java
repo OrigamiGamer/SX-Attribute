@@ -5,8 +5,8 @@ import github.saukiya.sxattribute.bstats.Metrics;
 import github.saukiya.sxattribute.command.MainCommand;
 import github.saukiya.sxattribute.data.RandomStringManager;
 import github.saukiya.sxattribute.data.SlotDataManager;
-import github.saukiya.sxattribute.data.attribute.SXAttributeManager;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
+import github.saukiya.sxattribute.data.attribute.SXAttributeManager;
 import github.saukiya.sxattribute.data.attribute.sub.attack.*;
 import github.saukiya.sxattribute.data.attribute.sub.defence.*;
 import github.saukiya.sxattribute.data.attribute.sub.other.EventMessage;
@@ -19,15 +19,14 @@ import github.saukiya.sxattribute.data.attribute.sub.update.WalkSpeed;
 import github.saukiya.sxattribute.data.condition.SXConditionManager;
 import github.saukiya.sxattribute.data.condition.sub.*;
 import github.saukiya.sxattribute.data.itemdata.ItemDataManager;
-import github.saukiya.sxattribute.data.itemdata.sub.ItemGeneratorImport;
-import github.saukiya.sxattribute.data.itemdata.sub.ItemGeneratorSX;
+import github.saukiya.sxattribute.data.itemdata.sub.GeneratorImport;
+import github.saukiya.sxattribute.data.itemdata.sub.GeneratorSX;
 import github.saukiya.sxattribute.listener.*;
 import github.saukiya.sxattribute.util.*;
 import jdk.internal.dynalink.beans.StaticClass;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +34,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -56,8 +58,11 @@ import java.util.stream.IntStream;
  */
 
 
-@Getter
 public class SXAttribute extends JavaPlugin {
+
+    @Getter
+    @Setter
+    private static DecimalFormat df = new DecimalFormat("#.##");
 
     @Getter
     private static int[] versionSplit = new int[3];
@@ -65,46 +70,38 @@ public class SXAttribute extends JavaPlugin {
     @Getter
     private static Random random = new Random();
 
+    @Getter
     private static SXAttribute inst;
 
+    @Getter
     private static SXAPI api = new SXAPI();
 
     @Getter
-    @Setter
-    private static DecimalFormat df = new DecimalFormat("#.##");
+    private static SXAttributeManager attributeManager;
 
     @Getter
-    private static boolean tabooLib = false;
+    private static SXConditionManager conditionManager;
+
     @Getter
-    private static boolean placeholder = false;
+    private static RandomStringManager randomStringManager;
+
     @Getter
-    private static boolean holographic = false;
+    private static ItemDataManager itemDataManager;
+
     @Getter
-    private static boolean vault = false;
+    private static SlotDataManager slotDataManager;
+
     @Getter
-    private static boolean rpgInventory = false;
+    private static NbtUtil nbtUtil;
+
     @Getter
-    private static boolean mythicMobs = false;
+    private static ListenerHealthChange listenerHealthChange;
 
-    private NbtUtil nbtUtil;
+    @Getter
+    private static boolean tabooLib, placeholder, holographic, vault, rpgInventory, mythicMobs;
 
-    private MainCommand mainCommand;
-
-    private SXAttributeManager attributeManager;
-
-    private SXConditionManager conditionManager;
-
-    private RandomStringManager randomStringManager;
-
-    private ItemDataManager itemDataManager;
-
-    private SlotDataManager slotDataManager;
-
-    private OnUpdateStatsListener onUpdateStatsListener;
-
-    private OnDamageListener onDamageListener;
-
-    private OnHealthChangeListener onHealthChangeListener;
+    @Getter
+    private static MainCommand mainCommand;
 
     @Override
     public void onLoad() {
@@ -114,44 +111,39 @@ public class SXAttribute extends JavaPlugin {
         String[] strSplit = version.split("[.]");
         IntStream.range(0, strSplit.length).forEach(i -> versionSplit[i] = Integer.valueOf(strSplit[i]));
         SXAttribute.getInst().getLogger().info("ServerVersion: " + version);
-        try {
-            Config.loadConfig();
-            Message.loadMessage();
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-            SXAttribute.getInst().getLogger().warning("IO Error!");
-        }
-        mainCommand = new MainCommand(this);
+        Config.loadConfig();
+        Message.loadMessage();
+        mainCommand = new MainCommand();
 
-        new Crit(this).registerAttribute();
-        new Damage(this).registerAttribute();
-        new HitRate(this).registerAttribute();
-        new Ignition(this).registerAttribute();
-        new LifeSteal(this).registerAttribute();
-        new Lightning(this).registerAttribute();
-        new AttackPotion(this).registerAttribute();
-        new Real(this).registerAttribute();
-        new Tearing(this).registerAttribute();
+        new Crit().registerAttribute();
+        new Damage().registerAttribute();
+        new HitRate().registerAttribute();
+        new Ignition().registerAttribute();
+        new LifeSteal().registerAttribute();
+        new Lightning().registerAttribute();
+        new AttackPotion().registerAttribute();
+        new Real().registerAttribute();
+        new Tearing().registerAttribute();
 
-        new Block(this).registerAttribute();
-        new Defense(this).registerAttribute();
-        new Dodge(this).registerAttribute();
-        new Reflection(this).registerAttribute();
-        new Toughness(this).registerAttribute();
+        new Block().registerAttribute();
+        new Defense().registerAttribute();
+        new Dodge().registerAttribute();
+        new Reflection().registerAttribute();
+        new Toughness().registerAttribute();
 
-        new EventMessage(this).registerAttribute();
-        new ExpAddition(this).registerAttribute();
+        new EventMessage().registerAttribute();
+        new ExpAddition().registerAttribute();
         if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-            new MythicMobsDrop(this).registerAttribute();
+            new MythicMobsDrop().registerAttribute();
         }
-        new HealthRegen(this).registerAttribute();
+        new HealthRegen().registerAttribute();
 
-        new Health(this).registerAttribute();
-        new WalkSpeed(this).registerAttribute();
+        new Health().registerAttribute();
+        new WalkSpeed().registerAttribute();
         if (SXAttribute.getVersionSplit()[1] > 8) {
-            new AttackSpeed(this).registerAttribute();
+            new AttackSpeed().registerAttribute();
         }
-        new Command(this).registerAttribute();
+        new Command().registerAttribute();
 
         File jsAttributeFiles = new File(getDataFolder(), "Attribute" + File.separator + "JavaScript");
         if (!jsAttributeFiles.exists() && SXAttribute.getVersionSplit()[1] > 8) {
@@ -174,8 +166,7 @@ public class SXAttribute extends JavaPlugin {
                     engine.put("API", api);
                     try {
                         engine.eval(new InputStreamReader(new FileInputStream(jsFile), StandardCharsets.UTF_8));
-                        JSAttribute jsAttribute = new JSAttribute(jsFile.getName().replace(".js", ""), this, engine);
-                        jsAttribute.registerAttribute();
+                        new JSAttribute(jsFile.getName().replace(".js", ""), engine).registerAttribute();
                     } catch (ScriptException | FileNotFoundException e) {
                         SXAttribute.getInst().getLogger().info("==========================================================================================");
                         e.printStackTrace();
@@ -187,17 +178,17 @@ public class SXAttribute extends JavaPlugin {
         }
 
         if (SXAttribute.getVersionSplit()[1] > 8) {
-            new MainHand(this).registerCondition();
-            new OffHand(this).registerCondition();
+            new MainHand().registerCondition();
+            new OffHand().registerCondition();
         }
-        new Hand(this).registerCondition();
-        new LimitLevel(this).registerCondition();
-        new Role(this).registerCondition();
-        new ExpiryTime(this).registerCondition();
-        new Durability(this).registerCondition();
+        new Hand().registerCondition();
+        new LimitLevel().registerCondition();
+        new Role().registerCondition();
+        new ExpiryTime().registerCondition();
+        new Durability().registerCondition();
 
-        ItemDataManager.registerGenerator(new ItemGeneratorImport(this));
-        ItemDataManager.registerGenerator(new ItemGeneratorSX(this));
+        ItemDataManager.registerGenerator(new GeneratorImport());
+        ItemDataManager.registerGenerator(new GeneratorSX());
     }
 
     @Override
@@ -234,7 +225,7 @@ public class SXAttribute extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
             mythicMobs = true;
-            Bukkit.getPluginManager().registerEvents(new OnMythicmobsSpawnListener(this), this);
+            Bukkit.getPluginManager().registerEvents(new ListenerMythicmobsSpawn(), this);
         } else {
             SXAttribute.getInst().getLogger().warning("No Find MythicMobs!");
         }
@@ -248,13 +239,6 @@ public class SXAttribute extends JavaPlugin {
         new Metrics(this);
         try {
             nbtUtil = new NbtUtil();
-            randomStringManager = new RandomStringManager(this);
-            itemDataManager = new ItemDataManager(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-            SXAttribute.getInst().getLogger().warning("IO Error!");
-            this.setEnabled(false);
-            return;
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
             SXAttribute.getInst().getLogger().warning("Reflection Error!");
@@ -262,15 +246,15 @@ public class SXAttribute extends JavaPlugin {
             return;
         }
 
+        randomStringManager = new RandomStringManager();
+        itemDataManager = new ItemDataManager();
         attributeManager = new SXAttributeManager();
-        conditionManager = new SXConditionManager(this);
+        conditionManager = new SXConditionManager();
         slotDataManager = new SlotDataManager();
-        onUpdateStatsListener = new OnUpdateStatsListener(this);
-        onDamageListener = new OnDamageListener(this);
-        onHealthChangeListener = new OnHealthChangeListener(this);
+        listenerHealthChange = new ListenerHealthChange();
 
         if (!Config.getConfig().getString(Config.DAMAGE_EVENT_PRIORITY, "HIGH").equals("HIGH")) {
-            for (Method method : OnDamageListener.class.getDeclaredMethods()) {
+            for (Method method : ListenerDamage.class.getDeclaredMethods()) {
                 if (method.getName().equals("onEntityDamageByEntityEvent")) {
                     try {
                         EventPriority priority = EventPriority.valueOf(Config.getConfig().getString(Config.DAMAGE_EVENT_PRIORITY));
@@ -294,21 +278,21 @@ public class SXAttribute extends JavaPlugin {
 
         }
 
-        Bukkit.getPluginManager().registerEvents(new OnBanShieldInteractListener(), this);
-        Bukkit.getPluginManager().registerEvents(onUpdateStatsListener, this);
-        Bukkit.getPluginManager().registerEvents(onDamageListener, this);
-        Bukkit.getPluginManager().registerEvents(onHealthChangeListener, this);
-        Bukkit.getPluginManager().registerEvents(new OnItemSpawnListener(), this);
+        Bukkit.getPluginManager().registerEvents(new ListenerBanShieldInteract(), this);
+        Bukkit.getPluginManager().registerEvents(new ListenerUpdateAttribute(), this);
+        Bukkit.getPluginManager().registerEvents(new ListenerDamage(), this);
+        Bukkit.getPluginManager().registerEvents(listenerHealthChange, this);
+        Bukkit.getPluginManager().registerEvents(new ListenerItemSpawn(), this);
         mainCommand.setup("sxAttribute");
         SXAttribute.getInst().getLogger().info("Author: Saukiya");
         if (Config.getConfig().getBoolean(Config.QAQ)) {
-            Bukkit.getConsoleSender().sendMessage("§c");
+            Bukkit.getConsoleSender().sendMessage("");
             Bukkit.getConsoleSender().sendMessage("§c   ______  __             ___   __  __       _ __          __");
             Bukkit.getConsoleSender().sendMessage("§c  / ___/ |/ /            /   | / /_/ /______(_) /_  __  __/ /____");
             Bukkit.getConsoleSender().sendMessage("§c  \\__ \\|   /   ______   / /| |/ __/ __/ ___/ / __ \\/ / / / __/ _ \\");
             Bukkit.getConsoleSender().sendMessage("§c ___/ /   |   /_____/  / ___ / /_/ /_/ /  / / /_/ / /_/ / /_/  __/");
             Bukkit.getConsoleSender().sendMessage("§c/____/_/|_|           /_/  |_\\__/\\__/_/  /_/_.___/\\__,_/\\__/\\___/");
-            Bukkit.getConsoleSender().sendMessage("§c");
+            Bukkit.getConsoleSender().sendMessage("");
         }
     }
 
@@ -316,14 +300,6 @@ public class SXAttribute extends JavaPlugin {
     public void onDisable() {
         attributeManager.onAttributeDisable();
         conditionManager.onConditionDisable();
-        onHealthChangeListener.cancel();
-    }
-
-    public static SXAttribute getInst() {
-        return inst;
-    }
-
-    public static SXAPI getAPI() {
-        return api;
+        listenerHealthChange.cancel();
     }
 }

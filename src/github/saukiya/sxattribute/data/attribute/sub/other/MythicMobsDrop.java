@@ -10,9 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,8 +19,8 @@ import java.util.List;
  */
 public class MythicMobsDrop extends SubAttribute implements Listener {
 
-    public MythicMobsDrop(JavaPlugin plugin) {
-        super(plugin, 0, AttributeType.OTHER);
+    public MythicMobsDrop() {
+        super(SXAttribute.getInst(), 0, AttributeType.OTHER);
     }
 
     //TODO 这里监听可能会出问题
@@ -51,7 +49,7 @@ public class MythicMobsDrop extends SubAttribute implements Listener {
                             amount = Integer.valueOf(args[1].replaceAll("[^\\d]", ""));
                         }
                     }
-                    ItemStack item = SXAttribute.getAPI().getItem(args[0], (Player) event.getKiller());
+                    ItemStack item = SXAttribute.getApi().getItem(args[0], (Player) event.getKiller());
                     if (item != null) {
                         item.setAmount(amount);
                         drops.add(item.clone());
@@ -74,7 +72,7 @@ public class MythicMobsDrop extends SubAttribute implements Listener {
 
     @Override
     public List<String> getPlaceholders() {
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

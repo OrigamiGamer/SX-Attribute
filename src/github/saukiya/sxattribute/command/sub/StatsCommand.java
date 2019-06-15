@@ -42,8 +42,8 @@ public class StatsCommand extends SubCommand implements Listener {
     }
 
     @Override
-    public void onCommand(SXAttribute plugin, CommandSender sender, String[] args) {
-        if (args.length > 1 && sender.hasPermission(plugin.getName() + ".admin")) {
+    public void onCommand(CommandSender sender, String[] args) {
+        if (args.length > 1 && sender.hasPermission(SXAttribute.getInst().getName() + ".admin")) {
             Player player = Bukkit.getPlayerExact(args[1]);
             if (player != null) {
                 openStatsInventory(player, (Player) sender);
@@ -55,7 +55,7 @@ public class StatsCommand extends SubCommand implements Listener {
     }
 
     public void openStatsInventory(Player player, Player... openInvPlayer) {
-        SXAttributeData attributeData = SXAttribute.getAPI().getEntityData(player);
+        SXAttributeData attributeData = SXAttribute.getApi().getEntityData(player);
         Inventory inv = Bukkit.createInventory(null, 27, Message.getMsg(Message.INVENTORY__STATS__NAME));
         ItemStack stainedGlass = MaterialControl.BLACK_STAINED_GLASS_PANE.parseItem();
         ItemMeta glassMeta = stainedGlass.getItemMeta();

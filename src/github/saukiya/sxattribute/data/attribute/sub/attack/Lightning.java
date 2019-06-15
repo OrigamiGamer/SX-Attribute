@@ -7,7 +7,6 @@ import github.saukiya.sxattribute.data.eventdata.EventData;
 import github.saukiya.sxattribute.data.eventdata.sub.DamageData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,8 +21,8 @@ public class Lightning extends SubAttribute {
     /**
      * double[0] 雷霆几率
      */
-    public Lightning(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.ATTACK);
+    public Lightning() {
+        super(SXAttribute.getInst(), 1, AttributeType.ATTACK);
     }
 
     @Override

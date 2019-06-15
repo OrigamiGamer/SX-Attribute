@@ -8,7 +8,6 @@ import github.saukiya.sxattribute.data.eventdata.sub.DamageData;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,8 +22,8 @@ public class Dodge extends SubAttribute {
     /**
      * double[0] 闪避几率
      */
-    public Dodge(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.DEFENCE);
+    public Dodge() {
+        super(SXAttribute.getInst(), 1, AttributeType.DEFENCE);
     }
 
 

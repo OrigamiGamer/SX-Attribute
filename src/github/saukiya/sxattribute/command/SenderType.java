@@ -7,6 +7,7 @@ package github.saukiya.sxattribute.command;
  */
 
 public enum SenderType {
+
     /**
      * 玩家
      */

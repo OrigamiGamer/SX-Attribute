@@ -3,8 +3,8 @@ package github.saukiya.sxattribute.command.sub;
 import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.command.SenderType;
 import github.saukiya.sxattribute.command.SubCommand;
+import github.saukiya.sxattribute.data.itemdata.IGenerator;
 import github.saukiya.sxattribute.data.itemdata.ItemDataManager;
-import github.saukiya.sxattribute.data.itemdata.SubItemGenerator;
 import github.saukiya.sxattribute.util.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class SaveCommand extends SubCommand {
     }
 
     @Override
-    public void onCommand(SXAttribute plugin, CommandSender sender, String[] args) {
+    public void onCommand(CommandSender sender, String[] args) {
 
         if (args.length < 2) {
             sender.sendMessage(Message.getMsg(Message.ADMIN__NO_FORMAT));
@@ -40,12 +40,12 @@ public class SaveCommand extends SubCommand {
             player.sendMessage(Message.getMsg(Message.ADMIN__NO_ITEM));
             return;
         }
-        if (plugin.getItemDataManager().hasItem(itemName)) {
+        if (SXAttribute.getItemDataManager().hasItem(itemName)) {
             player.sendMessage(Message.getMsg(Message.ADMIN__HAS_ITEM, itemName));
             return;
         }
         try {
-            if (plugin.getItemDataManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "SX")) {
+            if (SXAttribute.getItemDataManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "SX")) {
                 sender.sendMessage(Message.getMsg(Message.ADMIN__SAVE_ITEM, itemName));
             } else {
                 sender.sendMessage(Message.getMsg(Message.ADMIN__SAVE_NO_TYPE, itemName));
@@ -57,9 +57,9 @@ public class SaveCommand extends SubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(SXAttribute plugin, CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 3) {
-            return ItemDataManager.getGenerators().stream().map(SubItemGenerator::getType).collect(Collectors.toList());
+            return ItemDataManager.getGenerators().stream().map(IGenerator::getType).collect(Collectors.toList());
         }
         return null;
     }

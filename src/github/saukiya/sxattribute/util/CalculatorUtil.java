@@ -5,14 +5,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 作者: Sirm23333
+ * 计算器工具类
  * 来源: CSDN
  * 方法来源于网站: https://blog.csdn.net/qq_37969433/article/details/81200872
  * 标题: （算法）java完成解析数学算式（计算器）三 —— 用栈解析
+ *
+ * @author Sirm23333
  */
 public class CalculatorUtil {
 
-    static Pattern p = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/()]");// 这个正则为匹配表达式中的数字或运算符
+    static Pattern p = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");// 这个正则为匹配表达式中的数字或运算符
 
     private static double doubleCal(double a1, double a2, char operator) throws Exception {
         switch (operator) {
@@ -24,6 +26,8 @@ public class CalculatorUtil {
                 return a1 * a2;
             case '/':
                 return a1 / a2;
+            case '%':
+                return a1 % a2;
             default:
                 break;
         }
@@ -41,6 +45,7 @@ public class CalculatorUtil {
             case "-":
                 return 2;
             case "*":
+            case "%":
             case "/":
                 return 3;
             default:
@@ -65,7 +70,7 @@ public class CalculatorUtil {
         Matcher m = p.matcher(expr);
         while (m.find()) {
             String temp = m.group();
-            if (temp.matches("[+\\-*/()]")) {//遇到符号
+            if (temp.matches("[+\\-*/%()]")) {//遇到符号
                 if (temp.equals("(")) {//遇到左括号，直接入符号栈
                     operator.push(temp);
                 } else if (temp.equals(")")) {//遇到右括号，"符号栈弹栈取栈顶符号b，数字栈弹栈取栈顶数字a1，数字栈弹栈取栈顶数字a2，计算a2 b a1 ,将结果压入数字栈"，重复引号步骤至取栈顶为左括号，将左括号弹出

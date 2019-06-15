@@ -5,7 +5,7 @@ import github.saukiya.sxattribute.data.attribute.AttributeType;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.eventdata.EventData;
 import github.saukiya.sxattribute.data.eventdata.sub.UpdateData;
-import github.saukiya.sxattribute.data.itemdata.SubItemGenerator;
+import github.saukiya.sxattribute.data.itemdata.IGenerator;
 import github.saukiya.sxattribute.event.SXItemSpawnEvent;
 import github.saukiya.sxattribute.util.NbtUtil;
 import org.bukkit.attribute.Attribute;
@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -28,8 +27,8 @@ public class AttackSpeed extends SubAttribute implements Listener {
     /**
      * double[0] 攻击速度
      */
-    public AttackSpeed(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.UPDATE);
+    public AttackSpeed() {
+        super(SXAttribute.getInst(), 1, AttributeType.UPDATE);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class AttackSpeed extends SubAttribute implements Listener {
 
     @Override
     public void onEnable() {
-        nbtUtil = SXAttribute.getAPI().getNbtUtil();
+        nbtUtil = SXAttribute.getNbtUtil();
     }
 
     @Override
@@ -116,7 +115,7 @@ public class AttackSpeed extends SubAttribute implements Listener {
     void onItemSpawnEvent(SXItemSpawnEvent event) {
         // 整理攻击速度
         if (event.getItem().getItemMeta().hasLore()) {
-            SubItemGenerator ig = event.getIg();
+            IGenerator ig = event.getIg();
             if (config().getStringList("SupportIGList").contains(ig.getType())) {
                 double speed = ig.getConfig().getDouble("AttackSpeed", getAttackSpeed(event.getItem()));
                 if (speed > -1) {

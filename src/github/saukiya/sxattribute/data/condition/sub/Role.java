@@ -7,7 +7,6 @@ import github.saukiya.sxattribute.util.Message;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * 限制职业(权限)
@@ -16,8 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Role extends SubCondition {
 
-    public Role(JavaPlugin plugin) {
-        super(plugin);
+    public Role() {
+        super(SXAttribute.getInst());
     }
 
     @Override

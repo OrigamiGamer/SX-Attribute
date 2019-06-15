@@ -33,7 +33,7 @@ public class Placeholders {
 
         @Override
         public String onPlaceholderRequest(Player player, String string) {
-            return Placeholders.onPlaceholderRequest(player, string, SXAttribute.getInst().getAttributeManager().getEntityData(player));
+            return Placeholders.onPlaceholderRequest(player, string, SXAttribute.getAttributeManager().getEntityData(player));
         }
     }
 }

@@ -1,6 +1,6 @@
 name: SX-Attribute
 main: github.saukiya.sxattribute.SXAttribute
-version: 3.2.0-SNAPSHOT
+version: 3.3.0-SNAPSHOT
 author: Saukiya
 
 softdepend:
@@ -14,7 +14,6 @@ softdepend:
 
 commands:
   sxattribute:
-    usage: error! please reLoad this plugin
     aliases:
     - sx
 

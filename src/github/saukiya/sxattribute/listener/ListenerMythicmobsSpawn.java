@@ -1,10 +1,8 @@
 package github.saukiya.sxattribute.listener;
 
 import github.saukiya.sxattribute.SXAttribute;
-import github.saukiya.sxattribute.util.Message;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,15 +13,7 @@ import org.bukkit.inventory.ItemStack;
  * @author Saukiya
  */
 
-public class OnMythicmobsSpawnListener implements Listener {
-
-    private final String CONFIG_EQUIPMENT = "SX-Equipment";
-
-    private final SXAttribute plugin;
-
-    public OnMythicmobsSpawnListener(SXAttribute plugin) {
-        this.plugin = plugin;
-    }
+public class ListenerMythicmobsSpawn implements Listener {
 
     @EventHandler
     void onMythicMobSpawnEvent(MythicMobSpawnEvent event) {
@@ -32,7 +22,7 @@ public class OnMythicmobsSpawnListener implements Listener {
             LivingEntity entity = (LivingEntity) event.getEntity();
             EntityEquipment eq;
             eq = entity.getEquipment();
-            for (String str : mm.getConfig().getStringList(CONFIG_EQUIPMENT)) {
+            for (String str : mm.getConfig().getStringList("SX-Equipment")) {
                 // - sx 默认一:0 0.5
                 if (str.contains(":")) {
                     String[] args = str.split(":");// 物品:物品位置穿戴位置 几率
@@ -50,7 +40,7 @@ public class OnMythicmobsSpawnListener implements Listener {
                             position = Integer.valueOf(args[1]);
                         }
 
-                        ItemStack item = plugin.getItemDataManager().getItem(args[0], null);
+                        ItemStack item = SXAttribute.getItemDataManager().getItem(args[0], null);
                         if (item != null) {
                             switch (position) {
                                 case -1:

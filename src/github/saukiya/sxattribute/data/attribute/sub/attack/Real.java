@@ -1,12 +1,12 @@
 package github.saukiya.sxattribute.data.attribute.sub.attack;
 
+import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.eventdata.EventData;
 import github.saukiya.sxattribute.data.eventdata.sub.DamageData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +21,8 @@ public class Real extends SubAttribute {
     /**
      * double[0] 破甲几率
      */
-    public Real(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.ATTACK);
+    public Real() {
+        super(SXAttribute.getInst(), 1, AttributeType.ATTACK);
     }
 
     @Override

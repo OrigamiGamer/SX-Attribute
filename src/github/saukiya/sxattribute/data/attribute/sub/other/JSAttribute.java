@@ -8,7 +8,6 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.*;
 import java.io.File;
@@ -16,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author 格洛
- * @Since 2019/3/28 12:07
+ * @author Saukiya
  */
 @Getter
 public class JSAttribute extends SubAttribute {
@@ -25,8 +23,8 @@ public class JSAttribute extends SubAttribute {
     private Invocable invocable;
 
     @SuppressWarnings("unchecked")
-    public JSAttribute(String name, JavaPlugin plugin, ScriptEngine script) {
-        super(name, plugin, script.get("valuesLength") != null ? (int) script.get("valuesLength") : 0, ((List<AttributeType>) script.get("types")).toArray(new AttributeType[0]));
+    public JSAttribute(String name, ScriptEngine script) {
+        super(name, SXAttribute.getInst(), script.get("valuesLength") != null ? (int) script.get("valuesLength") : 0, ((List<AttributeType>) script.get("types")).toArray(new AttributeType[0]));
         this.script = script;
         invocable = (Invocable) script;
         script.put(name, this);

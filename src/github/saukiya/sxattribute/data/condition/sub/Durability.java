@@ -7,7 +7,6 @@ import github.saukiya.sxattribute.event.SXItemUpdateEvent;
 import github.saukiya.sxattribute.util.Config;
 import github.saukiya.sxattribute.util.Message;
 import github.saukiya.sxattribute.verision.MaterialControl;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -36,8 +35,8 @@ public class Durability extends SubCondition implements Listener {
 
     private final List<String> COLOR_REPLACE_LIST = Arrays.asList("%零%", "%一%", "%二%", "%三%", "%四%", "%五%", "%六%", "%七%", "%八%", "%九%");
 
-    public Durability(SXAttribute plugin) {
-        super(plugin);
+    public Durability() {
+        super(SXAttribute.getInst());
     }
 
     /**
@@ -103,12 +102,12 @@ public class Durability extends SubCondition implements Listener {
                                 clearItem(player, item);
                             }
                             player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1f, 1f);
-                            SXAttribute.getAPI().updateData(player);
-                            SXAttribute.getAPI().attributeUpdate(player);
+                            SXAttribute.getApi().updateData(player);
+                            SXAttribute.getApi().attributeUpdate(player);
                             return true;
                         }
-                        SXAttribute.getAPI().updateData(player);
-                        SXAttribute.getAPI().attributeUpdate(player);
+                        SXAttribute.getApi().updateData(player);
+                        SXAttribute.getApi().attributeUpdate(player);
                     }
                     // 设定耐久条
                     if (item.getType().getMaxDurability() != 0 && !isUnbreakable(meta)) {

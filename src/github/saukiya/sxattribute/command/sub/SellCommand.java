@@ -65,7 +65,7 @@ public class SellCommand extends SubCommand implements Listener {
     }
 
     @Override
-    public void onCommand(SXAttribute plugin, CommandSender sender, String[] args) {
+    public void onCommand(CommandSender sender, String[] args) {
         if (SXAttribute.isVault()) {
             openSellInventory((Player) sender);
         } else {

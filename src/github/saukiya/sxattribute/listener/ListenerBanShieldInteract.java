@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  * @author Saukiya
  */
 
-public class OnBanShieldInteractListener implements Listener {
+public class ListenerBanShieldInteract implements Listener {
 
     @EventHandler
     void onPlayerClickEvent(PlayerInteractEvent event) {

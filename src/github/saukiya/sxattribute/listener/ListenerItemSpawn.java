@@ -8,7 +8,7 @@ import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class OnItemSpawnListener implements Listener {
+public class ListenerItemSpawn implements Listener {
 
     @EventHandler
     void onItemSpawnEvent(ItemSpawnEvent event) {

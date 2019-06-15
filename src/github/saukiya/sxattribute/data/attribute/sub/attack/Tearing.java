@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
@@ -27,8 +26,8 @@ public class Tearing extends SubAttribute {
     /**
      * double[0] 撕裂几率
      */
-    public Tearing(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.ATTACK);
+    public Tearing() {
+        super(SXAttribute.getInst(), 1, AttributeType.ATTACK);
     }
 
     @Override

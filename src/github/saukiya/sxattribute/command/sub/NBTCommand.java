@@ -23,10 +23,10 @@ public class NBTCommand extends SubCommand {
     }
 
     @Override
-    public void onCommand(SXAttribute plugin, CommandSender sender, String[] args) {
+    public void onCommand(CommandSender sender, String[] args) {
         ItemStack item;
-        if (args.length > 1 && plugin.getItemDataManager().hasItem(args[1])) {
-            item = plugin.getItemDataManager().getItem(args[1], sender instanceof Player ? (Player) sender : null);
+        if (args.length > 1 && SXAttribute.getItemDataManager().hasItem(args[1])) {
+            item = SXAttribute.getItemDataManager().getItem(args[1], sender instanceof Player ? (Player) sender : null);
         } else if (sender instanceof Player) {
             EntityEquipment eq = ((Player) sender).getEquipment();
             if (SXAttribute.getVersionSplit()[1] >= 9) {
@@ -35,15 +35,15 @@ public class NBTCommand extends SubCommand {
                 item = eq.getItemInHand();
             }
         } else {
-            plugin.getItemDataManager().sendItemMapToPlayer(sender);
+            SXAttribute.getItemDataManager().sendItemMapToPlayer(sender);
             return;
         }
-        String str = plugin.getNbtUtil().getAllNBT(item);
+        String str = SXAttribute.getNbtUtil().getAllNBT(item);
         sender.sendMessage("\n\n" + str + "\n");
     }
 
     @Override
-    public List<String> onTabComplete(SXAttribute plugin, CommandSender sender, String[] args) {
-        return args.length == 2 ? plugin.getItemDataManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList()) : null;
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        return args.length == 2 ? SXAttribute.getItemDataManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList()) : null;
     }
 }

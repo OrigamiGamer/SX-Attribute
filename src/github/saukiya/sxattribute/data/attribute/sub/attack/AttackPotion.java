@@ -8,7 +8,6 @@ import github.saukiya.sxattribute.data.eventdata.sub.DamageData;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -18,6 +17,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 药水属性
+ * <p>
+ * PotionEffectType最大数量28个
+ *
  * @author Saukiya
  */
 public class AttackPotion extends SubAttribute {
@@ -25,12 +28,8 @@ public class AttackPotion extends SubAttribute {
     @Getter
     private PotionData[] dataList;
 
-    /**
-     * 药水属性
-     * double[28] PotionEffectType最大数量28个
-     */
-    public AttackPotion(JavaPlugin plugin) {
-        super(plugin, 28, AttributeType.ATTACK);
+    public AttackPotion() {
+        super(SXAttribute.getInst(), 28, AttributeType.ATTACK);
     }
 
     @Override

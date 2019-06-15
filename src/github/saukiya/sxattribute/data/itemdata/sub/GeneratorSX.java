@@ -2,8 +2,8 @@ package github.saukiya.sxattribute.data.itemdata.sub;
 
 import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.condition.SubCondition;
-import github.saukiya.sxattribute.data.itemdata.ItemUpdate;
-import github.saukiya.sxattribute.data.itemdata.SubItemGenerator;
+import github.saukiya.sxattribute.data.itemdata.IGenerator;
+import github.saukiya.sxattribute.data.itemdata.IUpdate;
 import github.saukiya.sxattribute.util.CalculatorUtil;
 import github.saukiya.sxattribute.util.Config;
 import github.saukiya.sxattribute.verision.MaterialControl;
@@ -23,12 +23,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @Author Saukiya
- * @Date 2019/2/27 17:48
+ * @author Saukiya
  */
-public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
-
-    JavaPlugin plugin;
+public class GeneratorSX implements IGenerator, IUpdate {
 
     String pathName;
 
@@ -56,11 +53,10 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
 
     boolean update;
 
-    public ItemGeneratorSX(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public GeneratorSX() {
     }
 
-    private ItemGeneratorSX(String pathName, String key, ConfigurationSection config) {
+    private GeneratorSX(String pathName, String key, ConfigurationSection config) {
         this.pathName = pathName;
         this.key = key;
         this.config = config;
@@ -70,7 +66,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
         this.enchantList = config.getStringList("EnchantList");
         this.itemFlagList = config.getStringList("ItemFlagList");
         this.unbreakable = config.getBoolean("Unbreakable");
-        this.color = config.getColor("Color");
+        this.color = config.isString("Color") ? Color.fromRGB(Integer.parseInt(config.getString("Color"), 16)) : null;
         this.skullName = config.getString("SkullName");
         this.hashCode = config.getValues(true).hashCode();
         this.update = config.getBoolean("Update");
@@ -78,7 +74,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
 
     @Override
     public JavaPlugin getPlugin() {
-        return plugin;
+        return SXAttribute.getInst();
     }
 
     @Override
@@ -87,8 +83,8 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
     }
 
     @Override
-    public SubItemGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
-        return new ItemGeneratorSX(pathName, key, config);
+    public IGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
+        return new GeneratorSX(pathName, key, config);
     }
 
     @Override
@@ -103,7 +99,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
 
     @Override
     public String getName() {
-        return SXAttribute.getAPI().getRandomStringManager().processRandomString(displayName, new HashMap<>());
+        return SXAttribute.getRandomStringManager().processRandomString(displayName, new HashMap<>());
     }
 
     @Override
@@ -114,13 +110,13 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
     @Override
     public ItemStack getItem(Player player) {
         Map<String, String> lockRandomMap = new HashMap<>();
-        String displayName = SXAttribute.getAPI().getRandomStringManager().processRandomString(this.displayName, lockRandomMap);
-        String id = SXAttribute.getAPI().getRandomStringManager().processRandomString(ids.get(SXAttribute.getRandom().nextInt(ids.size())), lockRandomMap);
+        String displayName = SXAttribute.getRandomStringManager().processRandomString(this.displayName, lockRandomMap);
+        String id = SXAttribute.getRandomStringManager().processRandomString(ids.get(SXAttribute.getRandom().nextInt(ids.size())), lockRandomMap);
         List<String> loreList = new ArrayList<>();
         for (String lore : this.loreList) {
-            lore = SXAttribute.getAPI().getRandomStringManager().processRandomString(lore, lockRandomMap);
+            lore = SXAttribute.getRandomStringManager().processRandomString(lore, lockRandomMap);
             if (!lore.contains("%DeleteLore%")) {
-                loreList.addAll(Arrays.asList(lore.replace("\n", "/n").split("/n")));
+                loreList.addAll(Arrays.asList(lore.split("/n|\n")));
             }
         }
         if (SXAttribute.isPlaceholder() && player != null) {
@@ -131,7 +127,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
         try {
             for (int i = 0; i < loreList.size(); i++) {
                 String lore = loreList.get(i);
-                List<String> replaceExprList = SXAttribute.getAPI().getRandomStringManager().getStringList("<c:", ">", lore);
+                List<String> replaceExprList = SXAttribute.getRandomStringManager().getStringList("<c:", ">", lore);
                 for (String expr : replaceExprList) {
                     lore = lore.replaceFirst("<c:" + expr.replace("*", "\\*").replace("(", "\\(").replace(")", "\\)").replace("+", "\\+") + ">", SXAttribute.getDf().format(CalculatorUtil.getResult(expr)));
                 }
@@ -143,9 +139,9 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
 
         List<String> enchantList = new ArrayList<>();
         for (String enchant : this.enchantList) {
-            enchant = SXAttribute.getAPI().getRandomStringManager().processRandomString(enchant, lockRandomMap);
+            enchant = SXAttribute.getRandomStringManager().processRandomString(enchant, lockRandomMap);
             if (!enchant.contains("%DeleteLore%")) {
-                enchantList.addAll(Arrays.asList(enchant.replace("\n", "/n").split("/n")));
+                enchantList.addAll(Arrays.asList(enchant.split("//n|\n")));
             }
         }
 
@@ -155,11 +151,11 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
             for (Map.Entry<String, String> entry : lockRandomMap.entrySet()) {
                 list.add(entry.getKey() + "§e§k|§e§r" + entry.getValue());
             }
-            SXAttribute.getAPI().getNbtUtil().setNBTList(item, SXAttribute.getInst().getName() + "-Lock", list);
+            SXAttribute.getNbtUtil().setNBTList(item, SXAttribute.getInst().getName() + "-Lock", list);
         }
         if (item.getItemMeta().hasLore()) {
-            if (Config.isClearDefaultAttribute() && SXAttribute.getAPI().getNbtUtil().isEquipment(item) && config.getBoolean("ClearAttribute", true)) {
-                SXAttribute.getAPI().getNbtUtil().clearAttribute(item);
+            if (Config.isClearDefaultAttribute() && SXAttribute.getNbtUtil().isEquipment(item) && config.getBoolean("ClearAttribute", true)) {
+                SXAttribute.getNbtUtil().clearAttribute(item);
             }
         }
         return item;
@@ -169,7 +165,6 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
     public ConfigurationSection saveItem(ItemStack saveItem, ConfigurationSection config) {
         ItemMeta itemMeta = saveItem.getItemMeta();
         config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
-        //TODO
         config.set("ID", saveItem.getType().name() + (saveItem.getDurability() != 0 ? ":" + saveItem.getDurability() : ""));
         if (itemMeta.hasLore()) {
             config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
@@ -182,7 +177,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
         }
         config.set("Unbreakable", SubCondition.isUnbreakable(itemMeta));
         if (itemMeta instanceof LeatherArmorMeta) {
-            config.set("Color", ((LeatherArmorMeta) itemMeta).getColor());
+            config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
         }
         if (itemMeta instanceof SkullMeta) {
             config.set("SkullName", ((SkullMeta) itemMeta).getOwner());
@@ -191,18 +186,6 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
     }
 
 
-    /**
-     * 快速生成物品
-     *
-     * @param itemName     String
-     * @param id           String
-     * @param loreList     List
-     * @param itemFlagList List
-     * @param unbreakable  Boolean
-     * @param color        String
-     * @param skullName    String
-     * @return ItemStack
-     */
     public ItemStack getItemStack(String itemName, String id, List<String> loreList, List<String> enchantList, List<String> itemFlagList, boolean unbreakable, Color color, String skullName) {
 
         ItemStack item = MaterialControl.fromString(id).parseItem();
@@ -255,7 +238,7 @@ public class ItemGeneratorSX implements SubItemGenerator, ItemUpdate {
     }
 
     @Override
-    public int getHashCode() {
+    public int updateCode() {
         return hashCode;
     }
 

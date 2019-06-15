@@ -1,18 +1,16 @@
 package github.saukiya.sxattribute.data.itemdata.sub;
 
-import github.saukiya.sxattribute.data.itemdata.SubItemGenerator;
+import github.saukiya.sxattribute.SXAttribute;
+import github.saukiya.sxattribute.data.itemdata.IGenerator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * @Author Saukiya
- * @Date 2019/2/27 17:48
+ * @author Saukiya
  */
-public class ItemGeneratorImport implements SubItemGenerator {
-
-    JavaPlugin plugin;
+public class GeneratorImport implements IGenerator {
 
     String pathName;
 
@@ -22,11 +20,10 @@ public class ItemGeneratorImport implements SubItemGenerator {
 
     ItemStack item;
 
-    public ItemGeneratorImport(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public GeneratorImport() {
     }
 
-    private ItemGeneratorImport(String pathName, String key, ConfigurationSection config) {
+    private GeneratorImport(String pathName, String key, ConfigurationSection config) {
         this.pathName = pathName;
         this.key = key;
         this.config = config;
@@ -35,7 +32,7 @@ public class ItemGeneratorImport implements SubItemGenerator {
 
     @Override
     public JavaPlugin getPlugin() {
-        return plugin;
+        return SXAttribute.getInst();
     }
 
     @Override
@@ -44,8 +41,8 @@ public class ItemGeneratorImport implements SubItemGenerator {
     }
 
     @Override
-    public SubItemGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
-        return new ItemGeneratorImport(pathName, key, config);
+    public IGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
+        return new GeneratorImport(pathName, key, config);
     }
 
     @Override

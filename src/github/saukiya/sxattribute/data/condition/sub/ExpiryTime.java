@@ -5,11 +5,9 @@ import github.saukiya.sxattribute.data.condition.SubCondition;
 import github.saukiya.sxattribute.util.Config;
 import github.saukiya.sxattribute.util.Message;
 import github.saukiya.sxattribute.util.TimeUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 
 /**
@@ -19,8 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ExpiryTime extends SubCondition {
 
-    public ExpiryTime(JavaPlugin plugin) {
-        super(plugin);
+    public ExpiryTime() {
+        super(SXAttribute.getInst());
     }
 
     @Override

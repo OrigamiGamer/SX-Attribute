@@ -6,10 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * @Author Saukiya
- * @Date 2019/2/27 17:28
+ * @author Saukiya
  */
-public interface SubItemGenerator {
+public interface IGenerator {
 
     /**
      * 返回plugin
@@ -33,7 +32,7 @@ public interface SubItemGenerator {
      * @param config   配置
      * @return ItemGenerator
      */
-    SubItemGenerator newGenerator(String pathName, String key, ConfigurationSection config);
+    IGenerator newGenerator(String pathName, String key, ConfigurationSection config);
 
     /**
      * 返回路径

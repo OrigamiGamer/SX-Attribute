@@ -2,9 +2,7 @@ package github.saukiya.sxattribute.data;
 
 import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.util.Config;
-import github.saukiya.sxattribute.util.Message;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;

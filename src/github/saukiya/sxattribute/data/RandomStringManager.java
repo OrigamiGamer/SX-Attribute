@@ -1,36 +1,25 @@
 package github.saukiya.sxattribute.data;
 
 import github.saukiya.sxattribute.SXAttribute;
-import github.saukiya.sxattribute.util.Message;
 import github.saukiya.sxattribute.util.TimeUtil;
-import org.bukkit.Bukkit;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * @author Saukiya
  */
+@Getter
 public class RandomStringManager {
+
     private final File file = new File(SXAttribute.getInst().getDataFolder(), "RandomString");
 
     private final Map<String, List<String>> map = new HashMap<>();
-    private final SXAttribute plugin;
 
-    public RandomStringManager(SXAttribute plugin) throws IOException {
-        this.plugin = plugin;
+    public RandomStringManager() {
         loadData();
-    }
-
-    /**
-     * 获取随机字符串数据
-     *
-     * @return Set
-     */
-    public Set<Map.Entry<String, List<String>>> entrySet() {
-        return map.entrySet();
     }
 
     /**
@@ -46,16 +35,10 @@ public class RandomStringManager {
             List<String> replaceLockStringList = getStringList("<l:", ">", string);
             for (String str : replaceLockStringList) {
                 String randomStr = lockMap.get(str);
-                if (randomStr != null) {
-                    string = string.replace("<l:" + str + ">", randomStr);
-                } else {
-                    randomStr = getRandomString(str, lockMap);
-                    if (!randomStr.equals("%DeleteLore%")) {
-                        // 记录到LockMap中
-                        lockMap.put(str, randomStr);
-                    }
-                    string = string.replace("<l:" + str + ">", randomStr);
+                if (randomStr == null) {
+                    lockMap.put(str, randomStr = getRandomString(str, lockMap));
                 }
+                string = string.replace("<l:" + str + ">", randomStr);
             }
             // 普通随机
             List<String> replaceStringList = getStringList("<s:", ">", string);
@@ -98,34 +81,25 @@ public class RandomStringManager {
     /**
      * 获取字符组
      *
-     * @param name    String
+     * @param string  Name
      * @param lockMap Map
      * @return String
      */
-    private String getRandomString(String name, Map<String, String> lockMap) {
-        List<String> randomList = map.get(name);
+    private String getRandomString(String string, Map<String, String> lockMap) {
+        List<String> randomList = map.get(string);
         if (randomList != null) {
-            String str1 = randomList.get(SXAttribute.getRandom().nextInt(randomList.size()));
-            if (lockMap != null) {
-                List<String> replaceLockStringList = getStringList("<l:", ">", str1);
-                for (String str : replaceLockStringList) {
-                    String randomStr = lockMap.get(str);
-                    if (randomStr != null) {
-                        str1 = str1.replace("<l:" + str + ">", randomStr);
-                    } else {
-                        randomStr = getRandomString(str, lockMap);
-                        if (!randomStr.equals("%DeleteLore%")) {
-                            lockMap.put(str, randomStr);
-                        }
-                        str1 = str1.replace("<l:" + str + ">", randomStr);
-                    }
+            string = randomList.get(SXAttribute.getRandom().nextInt(randomList.size()));
+            for (String str : getStringList("<l:", ">", string)) {
+                String randomStr = lockMap.get(str);
+                if (randomStr == null) {
+                    lockMap.put(str, randomStr = getRandomString(str, lockMap));
                 }
+                string = string.replace("<l:" + str + ">", randomStr);
             }
-            List<String> replaceStringList = getStringList("<s:", ">", str1);
-            for (String str2 : getStringList("<s:", ">", str1)) {
-                str1 = str1.replaceFirst("<s:" + str2 + ">", getRandomString(str2, lockMap));
+            for (String str2 : getStringList("<s:", ">", string)) {
+                string = string.replaceFirst("<s:" + str2 + ">", getRandomString(str2, lockMap));
             }
-            return str1;
+            return string;
         }
         return "%DeleteLore%";
     }
@@ -154,13 +128,12 @@ public class RandomStringManager {
 
     /**
      * 加载随机字符串数据
-     *
-     * @throws IOException IOException
      */
-    public void loadData() throws IOException {
+    public void loadData() {
         map.clear();
         if (!file.exists() || Objects.requireNonNull(file.listFiles()).length == 0) {
-            createDefaultRandom();
+            SXAttribute.getInst().saveResource("RandomString/DefaultRandom.yml", true);
+            SXAttribute.getInst().saveResource("RandomString/10Level/Random.yml", true);
         }
         loadRandom(file);
         SXAttribute.getInst().getLogger().info("Loaded " + map.size() + " RandomString");
@@ -171,7 +144,6 @@ public class RandomStringManager {
      *
      * @param files File
      */
-    @SuppressWarnings("unchecked")
     private void loadRandom(File files) {
         for (File file : Objects.requireNonNull(files.listFiles())) {
             if (file.isDirectory()) {
@@ -203,107 +175,5 @@ public class RandomStringManager {
                 }
             }
         }
-    }
-
-    /**
-     * 创建默认数据
-     *
-     * @throws IOException IOException
-     */
-    private void createDefaultRandom() throws IOException {
-        YamlConfiguration yml = new YamlConfiguration();
-        SXAttribute.getInst().getLogger().info("Create Item/Default.yml");
-        yml.set("DefaultLore", Arrays.asList(
-                "&7&o是由什么材质做成的呢?",
-                "&7&o源于诅咒的力量",
-                "&7&o火焰重塑、泯灭了这里，就这样诞生了",
-                "&7&o难以想象他到底隐藏了多大的能量"
-        ));
-        yml.set("DefaultPrefix", Arrays.asList(
-                "&c令人兴奋之",
-                "&c煞胁之",
-                "&e兴趣使然之",
-                "&e初心者之",
-                "&e丝质之",
-                "&e精灵之"
-        ));
-        yml.set("DefaultSuffix", Arrays.asList(
-                "&e淦",
-                "&e武",
-                "&e衡"
-        ));
-        yml.set("普通基数", "<d:1_1.1>");
-        yml.set("优秀基数", "<d:1.3_1.4>");
-        yml.set("史诗基数", "<d:1.7_1.8>");
-        yml.set("普通属判", Arrays.asList("%DeleteLore%", "%DeleteLore%", "%DeleteLore%", ""));
-        yml.set("优秀属判", Arrays.asList("%DeleteLore%", ""));
-        yml.set("史诗属判", Arrays.asList("%DeleteLore%", "", "", ""));
-        yml.set("普通颜色", Arrays.asList("<s:好丑Color>", "<s:好丑Color>", "<s:好丑Color>", "<s:好看Color>"));
-        yml.set("优秀颜色", Arrays.asList("<s:好丑Color>", "<s:好看Color>"));
-        yml.set("史诗颜色", Arrays.asList("<s:好丑Color>", "<s:好看Color>", "<s:好看Color>", "<s:好看Color>"));
-        yml.set("品质", Arrays.asList("普通", "普通", "普通", "普通", "普通", "普通", "普通", "优秀", "优秀", "史诗"));
-        yml.set("职业", Arrays.asList("射手", "战士", "剑士"));
-        yml.set("射手附魔", Arrays.asList(
-                Arrays.asList("ARROW_DAMAGE:<r:0_2>", "ARROW_INFINITE:<r:0_1>"),
-                Arrays.asList("ARROW_DAMAGE:<r:0_2>", "ARROW_FIRE:<r:0_2>"),
-                Arrays.asList("ARROW_DAMAGE:<r:0_2>", "DURABILITY:<r:0_1>")
-        ));
-        yml.set("战士附魔", Arrays.asList(
-                Arrays.asList("DAMAGE_ALL:<r:0_2>", "FIRE_ASPECT:<r:0_1>"),
-                Arrays.asList("DAMAGE_ARTHROPODS:<r:0_2>", "KNOCKBACK:<r:0_1>"),
-                Arrays.asList("DAMAGE_UNDEAD:<r:0_2>", "LOOT_BONUS_MOBS:<r:0_1>")
-        ));
-        yml.set("剑士附魔", Arrays.asList(
-                Arrays.asList("DAMAGE_ALL:<r:0_2>", "FIRE_ASPECT:<r:0_1>"),
-                Arrays.asList("DAMAGE_ALL:<r:0_2>", "KNOCKBACK:<r:0_1>"),
-                Arrays.asList("DAMAGE_ALL:<r:0_2>", "LOOT_BONUS_MOBS:<r:0_1>")
-        ));
-        yml.set("射手ID", "261");
-        yml.set("战士ID", "<s:战士<l:品质>ID>");
-        yml.set("剑士ID", "<s:剑士<l:品质>ID>");
-        yml.set("战士普通ID", "258");
-        yml.set("战士优秀ID", "286");
-        yml.set("战士史诗ID", "279");
-        yml.set("剑士普通ID", "267");
-        yml.set("剑士优秀ID", "283");
-        yml.set("剑士史诗ID", "276");
-        yml.set("材质", Arrays.asList("&01", "&01", "&02", "&03", "&04", "&05", "&06", "&07", "&08", "&09", "&010", "&011"));
-        yml.set("优秀职判", "");
-        yml.set("优秀职判", "");
-        yml.set("普通Color", "&7");
-        yml.set("优秀Color", "&a");
-        yml.set("史诗Color", "&5");
-        yml.set("普通宝石孔", "&a&l『&7武石槽&a&l』");
-        yml.set("优秀宝石孔", "&a&l『&7武石槽&a&l』&a&l『&7武石槽&a&l』");
-        yml.set("史诗宝石孔", "&a&l『&7武石槽&a&l』&a&l『&7武石槽&a&l』&a&l『&7武石槽&a&l』");
-        yml.set("史诗绑判", "");
-        yml.set("优秀介判", "");
-        yml.set("史诗介判", "");
-        yml.set("好看Color", Arrays.asList("&a", "&b", "&c", "&4", "&d", "&1", "&3", "&9"));
-        yml.set("好丑Color", Arrays.asList("&1", "&8", "&7", "&5", "&3", "&2"));
-        yml.set("攻随一", Arrays.asList("命中几率", "失明几率", "缓慢几率", "凋零几率", "夺食几率"));
-        yml.set("攻随二", Arrays.asList("雷霆几率", "破甲几率", "撕裂几率"));
-        yml.set("防随一_模板未使用", Arrays.asList("反射比例", "格挡比例", "韧性", "移动速度"));
-        yml.set("防随二_模板未使用", Arrays.asList("反射比例", "格挡比例", "闪避几率"));
-        yml.set("防随三_模板未使用", Arrays.asList("生命恢复", "生命上限", "PVP防御力", "PVE防御力"));
-        yml.save(new File(file, "DefaultRandom.yml"));
-        yml = new YamlConfiguration();
-        yml.set("攻一-10", Arrays.asList(
-                Arrays.asList(
-                        "<s:<l:品质>颜色>暴击几率: +<c:<r:20_30> * <s:<l:品质>基数>>%",
-                        "<s:<l:品质>颜色>暴击伤害: +<c:<r:20_30> * <s:<l:品质>基数>>%"
-                ),
-                Arrays.asList(
-                        "<s:<l:品质>颜色>攻击速度: +<c:<r:20_30> * <s:<l:品质>基数>>%",
-                        "<s:<l:品质>颜色>点燃几率: +<c:<r:20_30> * <s:<l:品质>基数>>%"
-                ),
-                Arrays.asList(
-                        "<s:<l:品质>颜色>吸血几率: +<c:<r:20_30> * <s:<l:品质>基数>>%",
-                        "<s:<l:品质>颜色>吸血倍率: +<c:<r:20_30> * <s:<l:品质>基数>>%"
-                )
-        ));
-        yml.set("攻二-10", Arrays.asList("<s:<l:品质>属判><s:<l:品质>颜色><s:攻随一>: +<c:<d:8_9> * <s:<l:品质>基数>>%"));
-        yml.set("攻三-10", Arrays.asList("<s:<l:品质>属判><s:<l:品质>颜色><s:攻随二>: +<c:<d:4_5> * <s:<l:品质>基数>>%"));
-        yml.save(new File(file, "10Level" + File.separator + "Random.yml"));
     }
 }

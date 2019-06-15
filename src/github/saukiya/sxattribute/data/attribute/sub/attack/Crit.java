@@ -1,5 +1,6 @@
 package github.saukiya.sxattribute.data.attribute.sub.attack;
 
+import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.eventdata.EventData;
@@ -10,24 +11,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * 暴击
+ * <p>
+ * double[0] 暴击几率
+ * double[1] 暴击伤害
  *
  * @author Saukiya
  */
 public class Crit extends SubAttribute implements Listener {
 
-    /**
-     * double[0] 暴击几率
-     * double[1] 暴击伤害
-     */
-    public Crit(JavaPlugin plugin) {
-        super(plugin, 2, AttributeType.ATTACK);
+    public Crit() {
+        super(SXAttribute.getInst(), 2, AttributeType.ATTACK);
     }
 
     @Override

@@ -2,8 +2,6 @@ package github.saukiya.sxattribute.verision;
 
 
 import github.saukiya.sxattribute.SXAttribute;
-import github.saukiya.sxattribute.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -909,17 +907,6 @@ public enum MaterialControl {
         } catch (IllegalArgumentException e) {
             return requestXMaterial(split[0], split.length > 1 ? (byte) Integer.parseInt(split[1]) : 0);
         }
-    }
-
-    public static void main(String[] args) {
-        int size = 0;
-        for (Material value : Material.values()) {
-            if (!value.name().startsWith("LEGACY_") && Arrays.stream(MaterialControl.values()).noneMatch(materialControl -> materialControl.name().equals(value.name()))) {
-                size++;
-                System.out.println("NULL Material: " + value.name());
-            }
-        }
-        System.out.println("Size: " + size);
     }
 
     // 遇到有耐久物品时，data失效

@@ -24,14 +24,14 @@ public class GiveCommand extends SubCommand {
     }
 
     @Override
-    public void onCommand(SXAttribute plugin, CommandSender sender, String[] args) {
+    public void onCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            plugin.getItemDataManager().sendItemMapToPlayer(sender, sender instanceof Player ? new String[]{""} : new String[0]);
+            SXAttribute.getItemDataManager().sendItemMapToPlayer(sender, sender instanceof Player ? new String[]{""} : new String[0]);
             return;
         }
         Player player = null;
-        if (!plugin.getItemDataManager().hasItem(args[1])) {
-            plugin.getItemDataManager().sendItemMapToPlayer(sender, args[1]);
+        if (!SXAttribute.getItemDataManager().hasItem(args[1])) {
+            SXAttribute.getItemDataManager().sendItemMapToPlayer(sender, args[1]);
             return;
         }
         int amount = args.length > 3 ? Integer.valueOf(args[3].replaceAll("[^\\d]", "")) : 1;
@@ -47,10 +47,10 @@ public class GiveCommand extends SubCommand {
 
         if (player != null) {
             for (int i = 0; i < amount; i++) {
-                player.getInventory().addItem(plugin.getItemDataManager().getItem(args[1], player));
+                player.getInventory().addItem(SXAttribute.getItemDataManager().getItem(args[1], player));
             }
-            plugin.getAttributeManager().loadEntityData(player);
-            plugin.getAttributeManager().attributeUpdateEvent(player);
+            SXAttribute.getAttributeManager().loadEntityData(player);
+            SXAttribute.getAttributeManager().attributeUpdateEvent(player);
             sender.sendMessage(Message.getMsg(Message.ADMIN__GIVE_ITEM, player.getName(), String.valueOf(amount), args[1]));
         } else {
             sender.sendMessage(Message.getMsg(Message.ADMIN__NO_CONSOLE));
@@ -58,9 +58,9 @@ public class GiveCommand extends SubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(SXAttribute plugin, CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return plugin.getItemDataManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
+            return SXAttribute.getItemDataManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
         }
         if (args.length == 4) {
             return Collections.singletonList("1");

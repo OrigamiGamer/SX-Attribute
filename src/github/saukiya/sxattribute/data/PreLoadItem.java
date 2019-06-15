@@ -7,8 +7,9 @@ import lombok.ToString;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @Author 格洛
- * @Since 2019/6/14 0:15
+ * 预加载的物品
+ *
+ * @author Saukiya
  */
 
 @AllArgsConstructor

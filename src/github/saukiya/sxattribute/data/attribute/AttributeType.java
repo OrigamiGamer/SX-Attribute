@@ -1,7 +1,5 @@
 package github.saukiya.sxattribute.data.attribute;
 
-import lombok.Getter;
-
 /**
  * 属性类型
  *

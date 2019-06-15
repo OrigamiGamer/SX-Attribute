@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -28,9 +27,9 @@ public class HealthRegen extends SubAttribute {
             try {
                 for (Player player : new ArrayList<>(Bukkit.getOnlinePlayers())) {
                     if (player != null && !player.isDead() && player.isOnline()) {
-                        double maxHealth = SXAttribute.getAPI().getMaxHealth(player);
+                        double maxHealth = SXAttribute.getApi().getMaxHealth(player);
                         if (player.getHealth() < maxHealth) {
-                            double healthRegen = SXAttribute.getAPI().getEntityData(player).getValues(getName())[0];
+                            double healthRegen = SXAttribute.getApi().getEntityData(player).getValues(getName())[0];
                             if (healthRegen > 0) {
                                 EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, healthRegen, EntityRegainHealthEvent.RegainReason.CUSTOM);
                                 Bukkit.getPluginManager().callEvent(event);
@@ -57,8 +56,8 @@ public class HealthRegen extends SubAttribute {
     /**
      * double[0] 生命回复
      */
-    public HealthRegen(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.OTHER);
+    public HealthRegen() {
+        super(SXAttribute.getInst(), 1, AttributeType.OTHER);
     }
 
     @Override

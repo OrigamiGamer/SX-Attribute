@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +23,8 @@ public class ExpAddition extends SubAttribute implements Listener {
     /**
      * double[] 经验加成
      */
-    public ExpAddition(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.OTHER);
+    public ExpAddition() {
+        super(SXAttribute.getInst(), 1, AttributeType.OTHER);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ExpAddition extends SubAttribute implements Listener {
     @EventHandler
     private void onExpChangeEvent(PlayerExpChangeEvent event) {
         Player player = event.getPlayer();
-        double expAddition = SXAttribute.getAPI().getEntityData(player).getValues(getName())[0];
+        double expAddition = SXAttribute.getApi().getEntityData(player).getValues(getName())[0];
         if (event.getAmount() > 0 && expAddition > 0) {
             event.setAmount((int) (event.getAmount() * (100 + expAddition) / 100));
             send(player, "Message", event.getAmount(), expAddition);

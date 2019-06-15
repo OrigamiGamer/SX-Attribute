@@ -4,7 +4,6 @@ import github.saukiya.sxattribute.data.PreLoadItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -12,11 +11,10 @@ import org.bukkit.event.HandlerList;
 import java.util.List;
 
 /**
- * 加载实体物品数据事件
+ * 预加载物品事件
  *
  * @author Saukiya
  */
-
 @AllArgsConstructor
 @Getter
 @ToString

@@ -1,4 +1,3 @@
-MESSAGE_VERSION: 3.1.5-SNAPSHOT
 PLAYER:
   NO_REGISTER_SLOTS: '[SX-Attribute] &c服务器没有开启额外的槽位识别'
   NO_LEVEL_USE: '[SX-Attribute] &c你没有达到使用 &a{0} &c的等级要求!'

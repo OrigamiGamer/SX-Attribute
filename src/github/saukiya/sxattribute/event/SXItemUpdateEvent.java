@@ -1,6 +1,6 @@
 package github.saukiya.sxattribute.event;
 
-import github.saukiya.sxattribute.data.itemdata.SubItemGenerator;
+import github.saukiya.sxattribute.data.itemdata.IGenerator;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -13,8 +13,6 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Saukiya
  */
-
-
 @Getter
 public class SXItemUpdateEvent extends SXItemSpawnEvent implements Cancellable {
 
@@ -25,7 +23,7 @@ public class SXItemUpdateEvent extends SXItemSpawnEvent implements Cancellable {
     @Setter
     private boolean cancelled = false;
 
-    public SXItemUpdateEvent(Player player, SubItemGenerator ig, ItemStack item, ItemStack oldItem) {
+    public SXItemUpdateEvent(Player player, IGenerator ig, ItemStack item, ItemStack oldItem) {
         super(player, ig, item);
         this.oldItem = oldItem;
     }

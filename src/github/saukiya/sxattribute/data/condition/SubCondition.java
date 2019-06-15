@@ -9,7 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -81,6 +83,7 @@ public abstract class SubCondition implements Comparable<SubCondition> {
 
     /**
      * 判断条件类型
+     *
      * @param type 目标类型
      * @return boolean
      */
@@ -172,7 +175,7 @@ public abstract class SubCondition implements Comparable<SubCondition> {
      * @return int
      */
     public static int getDurability(String lore) {
-        return lore.contains("/") && lore.split("/").length > 1 ? Integer.valueOf(lore.replaceAll("§\\d", "").split("/")[0].replaceAll("[^\\d]", "")) : 0;
+        return lore.split("/").length > 1 ? Integer.valueOf(lore.replaceAll("§\\d", "").split("/")[0].replaceAll("[^\\d]", "")) : 0;
     }
 
     /**

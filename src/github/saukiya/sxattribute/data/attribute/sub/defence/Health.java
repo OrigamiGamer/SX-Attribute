@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.SpigotConfig;
 
 import java.util.Arrays;
@@ -34,8 +33,8 @@ public class Health extends SubAttribute {
      * 生命
      * double[0] 生命值
      */
-    public Health(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.UPDATE);
+    public Health() {
+        super(SXAttribute.getInst(), 1, AttributeType.UPDATE);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class Health extends SubAttribute {
             } else {
                 player.setMaxHealth(maxHealth);
             }
-            if (healthScaled && healthScaledValue < SXAttribute.getAPI().getMaxHealth(player)) {
+            if (healthScaled && healthScaledValue < SXAttribute.getApi().getMaxHealth(player)) {
                 player.setHealthScaled(true);
                 player.setHealthScale(healthScaledValue);
             } else {
@@ -91,7 +90,7 @@ public class Health extends SubAttribute {
     public Object getPlaceholder(double[] values, Player player, String string) {
         switch (string) {
             case "MaxHealth":
-                return SXAttribute.getAPI().getMaxHealth(player);
+                return SXAttribute.getApi().getMaxHealth(player);
             case "Health":
                 return player.getHealth();
             case "HealthValue":

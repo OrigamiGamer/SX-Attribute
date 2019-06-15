@@ -1,6 +1,5 @@
 package github.saukiya.sxattribute.util;
 
-import github.saukiya.sxattribute.SXAttribute;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;

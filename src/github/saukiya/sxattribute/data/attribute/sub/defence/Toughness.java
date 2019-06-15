@@ -1,11 +1,11 @@
 package github.saukiya.sxattribute.data.attribute.sub.defence;
 
+import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.eventdata.EventData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +20,8 @@ public class Toughness extends SubAttribute {
     /**
      * double[0] 韧性
      */
-    public Toughness(JavaPlugin plugin) {
-        super(plugin, 1, AttributeType.OTHER);
+    public Toughness() {
+        super(SXAttribute.getInst(), 1, AttributeType.OTHER);
     }
 
     @Override

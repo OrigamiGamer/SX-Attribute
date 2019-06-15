@@ -2,6 +2,7 @@ package github.saukiya.sxattribute.listener;
 
 import github.saukiya.sxattribute.SXAttribute;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,16 +18,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 
-public class OnUpdateStatsListener implements Listener {
+public class ListenerUpdateAttribute implements Listener {
 
-    private final SXAttribute plugin;
-
-    private final VersionListener versionListener = new VersionListener();
-
-    public OnUpdateStatsListener(SXAttribute plugin) {
-        this.plugin = plugin;
+    public ListenerUpdateAttribute() {
         if (SXAttribute.getVersionSplit()[1] > 8) {
-            Bukkit.getPluginManager().registerEvents(new VersionListener(), plugin);
+            Bukkit.getPluginManager().registerEvents(new VersionListener(), SXAttribute.getInst());
         }
     }
 
@@ -52,22 +48,18 @@ public class OnUpdateStatsListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                plugin.getAttributeManager().loadEntityData(player);
-                plugin.getAttributeManager().attributeUpdateEvent(player);
+                SXAttribute.getAttributeManager().loadEntityData(player);
+                SXAttribute.getAttributeManager().attributeUpdateEvent(player);
             }
-        }.runTaskAsynchronously(plugin);
+        }.runTaskAsynchronously(SXAttribute.getInst());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        Player player = event.getPlayer();
-        Inventory inv = player.getInventory();
+        Inventory inv = event.getPlayer().getInventory();
         ItemStack oldItem = inv.getItem(event.getPreviousSlot());
         ItemStack newItem = inv.getItem(event.getNewSlot());
-        updateHandData(player, oldItem, newItem);
+        updateHandData(event.getPlayer(), oldItem, newItem);
     }
 
     @EventHandler
@@ -83,31 +75,22 @@ public class OnUpdateStatsListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     void onPlayerDropEvent(PlayerDropItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         ItemStack item = event.getItemDrop().getItemStack();
         updateHandData(player, item);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     void onPlayerPickupItemEvent(PlayerPickupItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         ItemStack item = event.getItem().getItemStack();
         updateHandData(player, item);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         if ((event.getAction() + "").contains("RIGHT")) {
             if (event.getItem() != null) {
@@ -121,21 +104,16 @@ public class OnUpdateStatsListener implements Listener {
 
     @EventHandler
     void onPlayerJoinEvent(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        updateEquipmentData(player);
+        updateEquipmentData(event.getPlayer());
     }
 
     @EventHandler
     void onPlayerQuitEvent(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        plugin.getAttributeManager().clearEntityData(player.getUniqueId());
+        SXAttribute.getAttributeManager().clearEntityData(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     void onEntitySpawnEvent(CreatureSpawnEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         LivingEntity entity = event.getEntity();
 
         if (SXAttribute.getVersionSplit()[1] > 8) {
@@ -145,36 +123,35 @@ public class OnUpdateStatsListener implements Listener {
             @Override
             public void run() {
                 if (entity != null && !entity.isDead()) {
-                    plugin.getAttributeManager().loadEntityData(entity);
-                    plugin.getAttributeManager().attributeUpdateEvent(entity);
+                    SXAttribute.getAttributeManager().loadEntityData(entity);
+                    SXAttribute.getAttributeManager().attributeUpdateEvent(entity);
                     if (SXAttribute.getVersionSplit()[1] > 8) {
                         entity.setInvulnerable(false);
                     }
                 }
             }
-        }.runTaskLaterAsynchronously(plugin, 16);
+        }.runTaskLaterAsynchronously(SXAttribute.getInst(), 16);
     }
 
     @EventHandler
     void onEntityDeathEvent(EntityDeathEvent event) {
+        //TODO 记得删除
         if (event.getEntity() instanceof Arrow) {
             System.out.println(" >The Arrow is Death");
-            if (SXAttribute.getInst().getAttributeManager().getEntityDataMap().containsKey(event.getEntity().getUniqueId())) {
+            if (SXAttribute.getAttributeManager().getEntityDataMap().containsKey(event.getEntity().getUniqueId())) {
                 System.out.println("  >this has Attribute");
+                YamlConfiguration yaml;
             }
         }
         if (!(event.getEntity() instanceof Player)) {
-            plugin.getAttributeManager().clearEntityData(event.getEntity().getUniqueId());
+            SXAttribute.getAttributeManager().clearEntityData(event.getEntity().getUniqueId());
         }
     }
 
     public class VersionListener implements Listener {
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         void onPlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
-            if (event.isCancelled()) {
-                return;
-            }
             Player player = event.getPlayer();
             ItemStack oldItem = event.getMainHandItem();
             ItemStack newItem = event.getOffHandItem();

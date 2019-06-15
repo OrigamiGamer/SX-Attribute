@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -28,8 +27,8 @@ public class EventMessage extends SubAttribute implements Listener {
     @Getter
     private List<HoloData> holoList = null;
 
-    public EventMessage(JavaPlugin plugin) {
-        super(plugin, 0, AttributeType.OTHER);
+    public EventMessage() {
+        super(SXAttribute.getInst(), 0, AttributeType.OTHER);
     }
 
     @Override

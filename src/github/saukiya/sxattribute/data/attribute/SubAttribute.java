@@ -14,7 +14,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -55,7 +57,7 @@ public abstract class SubAttribute extends Message.Tool implements Comparable<Su
      * 实现一个属性类
      *
      * @param length int 数组长度
-     * @param types        SXAttributeType 属性类型
+     * @param types  SXAttributeType 属性类型
      */
     public SubAttribute(JavaPlugin plugin, int length, AttributeType... types) {
         this(null, plugin, length, types);
@@ -224,7 +226,7 @@ public abstract class SubAttribute extends Message.Tool implements Comparable<Su
      *
      * @return double
      */
-    public double calculationCombatPower(double[] values){
+    public double calculationCombatPower(double[] values) {
         return 0D;
     }
 

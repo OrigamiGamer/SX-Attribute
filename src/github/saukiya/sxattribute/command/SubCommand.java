@@ -36,7 +36,6 @@ public abstract class SubCommand implements Comparable<SubCommand> {
 
     /**
      * 注册指令方法
-     *
      */
     public final void registerCommand() {
         if (!SXAttribute.getInst().isEnabled() && commands.stream().noneMatch(subCommand -> subCommand.cmd.equals(cmd))) {
@@ -56,21 +55,19 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     /**
      * 执行指令抽象方法
      *
-     * @param plugin SXAttribute
      * @param sender CommandSender
      * @param args   String[]
      */
-    public abstract void onCommand(SXAttribute plugin, CommandSender sender, String[] args);
+    public abstract void onCommand(CommandSender sender, String[] args);
 
     /**
      * TAB执行方法
      *
-     * @param plugin SXAttribute
      * @param sender CommandSender
      * @param args   String[]
      * @return List
      */
-    public List<String> onTabComplete(SXAttribute plugin, CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         return null;
     }
 
@@ -86,7 +83,7 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     }
 
     public String getIntroduction() {
-        return Arrays.stream(Message.values()).anyMatch(loc->loc.name().equals("COMMAND__" + cmd.toUpperCase())) ? Message.getMsg(Message.valueOf("COMMAND__" + cmd.toUpperCase())) : "";
+        return Arrays.stream(Message.values()).anyMatch(loc -> loc.name().equals("COMMAND__" + cmd.toUpperCase())) ? Message.getMsg(Message.valueOf("COMMAND__" + cmd.toUpperCase())) : "";
     }
 
     protected void setArg(String arg) {

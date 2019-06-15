@@ -1,12 +1,12 @@
 package github.saukiya.sxattribute.data.condition.sub;
 
+import github.saukiya.sxattribute.SXAttribute;
 import github.saukiya.sxattribute.data.condition.EquipmentType;
 import github.saukiya.sxattribute.data.condition.SubCondition;
 import github.saukiya.sxattribute.util.Config;
 import github.saukiya.sxattribute.util.Message;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * 限制副手
@@ -15,8 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class OffHand extends SubCondition {
 
-    public OffHand(JavaPlugin plugin) {
-        super(plugin, EquipmentType.OFF_HAND);
+    public OffHand() {
+        super(SXAttribute.getInst(), EquipmentType.OFF_HAND);
     }
 
     @Override

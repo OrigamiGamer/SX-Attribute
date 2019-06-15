@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class SXConditionManager implements Listener {
 
-    public SXConditionManager(SXAttribute plugin) {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    public SXConditionManager() {
+        Bukkit.getPluginManager().registerEvents(this, SXAttribute.getInst());
         int size = SubCondition.getConditions().size();
         Collections.sort(SubCondition.getConditions());
         for (int i = 0; i < size; i++) {

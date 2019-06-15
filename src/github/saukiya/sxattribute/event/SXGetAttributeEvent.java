@@ -12,7 +12,6 @@ import org.bukkit.event.HandlerList;
  *
  * @author Saukiya
  */
-
 public class SXGetAttributeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();

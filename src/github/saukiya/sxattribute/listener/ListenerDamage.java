@@ -1,8 +1,8 @@
 package github.saukiya.sxattribute.listener;
 
 import github.saukiya.sxattribute.SXAttribute;
-import github.saukiya.sxattribute.data.attribute.SXAttributeData;
 import github.saukiya.sxattribute.data.attribute.AttributeType;
+import github.saukiya.sxattribute.data.attribute.SXAttributeData;
 import github.saukiya.sxattribute.data.attribute.SubAttribute;
 import github.saukiya.sxattribute.data.condition.SubCondition;
 import github.saukiya.sxattribute.data.eventdata.sub.DamageData;
@@ -25,13 +25,7 @@ import org.bukkit.inventory.ItemStack;
  * @author Saukiya
  */
 
-public class OnDamageListener implements Listener {
-
-    private final SXAttribute plugin;
-
-    public OnDamageListener(SXAttribute plugin) {
-        this.plugin = plugin;
-    }
+public class ListenerDamage implements Listener {
 
     @EventHandler
     void onProjectileHitEvent(EntityShootBowEvent event) {
@@ -39,7 +33,7 @@ public class OnDamageListener implements Listener {
         Entity projectile = event.getProjectile();
         LivingEntity entity = event.getEntity();
         if (entity instanceof LivingEntity) {
-            SXAttribute.getAPI().setProjectileData(projectile.getUniqueId(), plugin.getAttributeManager().getEntityData(entity));
+            SXAttribute.getApi().setProjectileData(projectile.getUniqueId(), SXAttribute.getAttributeManager().getEntityData(entity));
             ItemStack item = event.getBow();
             if (item != null && SubCondition.isUnbreakable(item.getItemMeta())) {
                 Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent((Player) entity, item, 1));
@@ -59,7 +53,7 @@ public class OnDamageListener implements Listener {
         // 当攻击者为投抛物时
         if (event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof LivingEntity) {
             attackEntity = (LivingEntity) ((Projectile) event.getDamager()).getShooter();
-            attackData = SXAttribute.getAPI().getProjectileData(event.getDamager().getUniqueId());
+            attackData = SXAttribute.getApi().getProjectileData(event.getDamager().getUniqueId());
         } else if (event.getDamager() instanceof LivingEntity) {
             attackEntity = (LivingEntity) event.getDamager();
         }
@@ -69,8 +63,8 @@ public class OnDamageListener implements Listener {
             return;
         }
 
-        defenseData = plugin.getAttributeManager().getEntityData(defenseEntity);
-        attackData = attackData != null ? attackData : plugin.getAttributeManager().getEntityData(attackEntity);
+        defenseData = SXAttribute.getAttributeManager().getEntityData(defenseEntity);
+        attackData = attackData != null ? attackData : SXAttribute.getAttributeManager().getEntityData(attackEntity);
 
         EntityEquipment eq = attackEntity.getEquipment();
         ItemStack mainHand = SXAttribute.getVersionSplit()[1] > 8 ? eq.getItemInMainHand() : eq.getItemInHand();
@@ -84,8 +78,8 @@ public class OnDamageListener implements Listener {
             }
         }
 
-        String defenseName = plugin.getOnHealthChangeListener().getEntityName(defenseEntity);
-        String attackName = plugin.getOnHealthChangeListener().getEntityName(attackEntity);
+        String defenseName = SXAttribute.getListenerHealthChange().getEntityName(defenseEntity);
+        String attackName = SXAttribute.getListenerHealthChange().getEntityName(attackEntity);
 
         DamageData damageData = new DamageData(defenseEntity, attackEntity, defenseName, attackName, defenseData, attackData, event);
 

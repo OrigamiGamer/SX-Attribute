@@ -43,11 +43,7 @@ Default-2:
   - HIDE_ENCHANTS
   - HIDE_UNBREAKABLE
   Unbreakable: true
-  Color:
-    ==: Color
-    RED: 255
-    BLUE: 255
-    GREEN: 255
+  Color: ffffff
   Update: true
   ClearAttribute: false
 Default-3:

@@ -7,7 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * 插件重载事件
+ * 伤害事件
  *
  * @author Saukiya
  */

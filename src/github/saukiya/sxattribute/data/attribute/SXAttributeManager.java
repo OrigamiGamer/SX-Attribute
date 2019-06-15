@@ -74,19 +74,19 @@ public class SXAttributeManager implements Listener {
     /**
      * 获取物品的属性
      *
-     * @param entity 实体
+     * @param entity      实体
      * @param preItemList 预加载物品
      * @return SXAttribute
      */
     public SXAttributeData loadItemData(LivingEntity entity, List<PreLoadItem> preItemList) {
-        Iterator<PreLoadItem> iterator =  preItemList.iterator();
+        Iterator<PreLoadItem> iterator = preItemList.iterator();
         while (iterator.hasNext()) {
             PreLoadItem preLoadItem = iterator.next();
             List<String> list = new ArrayList<>();
             if (preLoadItem.getItem().getItemMeta().hasLore()) {
                 list = preLoadItem.getItem().getItemMeta().getLore().stream().map(str -> str.split("§X")[0]).filter(str -> str.length() > 0).collect(Collectors.toList());
             }
-            if (!SXAttribute.getInst().getConditionManager().isUse(entity, preLoadItem.getType(), list)) {
+            if (!SXAttribute.getConditionManager().isUse(entity, preLoadItem.getType(), list)) {
                 iterator.remove();
             }
         }
@@ -130,7 +130,7 @@ public class SXAttributeManager implements Listener {
      * @param entity Player
      */
     public void attributeUpdateEvent(LivingEntity entity) {
-        Bukkit.getScheduler().runTask(SXAttribute.getInst(), () ->{
+        Bukkit.getScheduler().runTask(SXAttribute.getInst(), () -> {
             UpdateData updateData = new UpdateData(entity);
             SXAttributeData attributeData = getEntityData(entity);
             for (SubAttribute attribute : SubAttribute.getAttributes()) {
@@ -154,7 +154,7 @@ public class SXAttributeManager implements Listener {
     public SXAttributeData getEntityData(LivingEntity entity) {
         SXAttributeData data = new SXAttributeData();
         data.add(getEntityDataMap().get(entity.getUniqueId()));
-        data.add(SXAttribute.getAPI().getAPIAttribute(entity.getUniqueId()));
+        data.add(SXAttribute.getApi().getAPIAttribute(entity.getUniqueId()));
         data.calculationCombatPower();
         data.add(defaultAttributeData);
         SXGetAttributeEvent event = new SXGetAttributeEvent(entity, data);
@@ -170,7 +170,7 @@ public class SXAttributeManager implements Listener {
      */
     public void clearEntityData(UUID uuid) {
         getEntityDataMap().remove(uuid);
-        SXAttribute.getAPI().removeEntityAllPluginData(uuid);
+        SXAttribute.getApi().removeEntityAllPluginData(uuid);
     }
 
     /**
@@ -198,9 +198,9 @@ public class SXAttributeManager implements Listener {
             // Slot Load
             if (player != null) {
                 Inventory inv = player.getInventory();
-                for (SlotData slotData : SXAttribute.getInst().getSlotDataManager().getSlotList()) {
+                for (SlotData slotData : SXAttribute.getSlotDataManager().getSlotList()) {
                     ItemStack item = inv.getItem(slotData.getSlot());
-                    SXAttribute.getInst().getItemDataManager().updateItem(item, (Player) entity);
+                    SXAttribute.getItemDataManager().updateItem(item, (Player) entity);
                     if (item != null && !item.getType().equals(MaterialControl.AIR.parse()) && item.getItemMeta().hasLore() && item.getItemMeta().getLore().stream().anyMatch(lore -> lore.contains(slotData.getName()))) {
                         preItemList.add(new PreLoadItem(EquipmentType.SLOT, item));
                     }
@@ -232,7 +232,7 @@ public class SXAttributeManager implements Listener {
         // Update Items
         if (player != null) {
             for (PreLoadItem preLoadItem : preItemList) {
-                SXAttribute.getInst().getItemDataManager().updateItem(preLoadItem.getItem(), player);
+                SXAttribute.getItemDataManager().updateItem(preLoadItem.getItem(), player);
             }
         }
 

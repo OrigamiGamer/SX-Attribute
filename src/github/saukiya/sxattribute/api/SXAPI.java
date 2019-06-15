@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Sx 临时api名
@@ -35,29 +34,6 @@ public class SXAPI {
     }
 
     /**
-     * 获取 ItemUtils(NBT反射类)
-     *
-     * @return ItemUtils
-     */
-    public NbtUtil getNbtUtil() {
-        return SXAttribute.getInst().getNbtUtil();
-    }
-
-    /**
-     * 获取 RandomStringManager(随机字符管理)
-     *
-     * @return RandomStringManager
-     */
-    public RandomStringManager getRandomStringManager() {
-        return SXAttribute.getInst().getRandomStringManager();
-    }
-
-
-    public List<SlotData> getRegisterSlotList() {
-        return SXAttribute.getInst().getSlotDataManager().getSlotList();
-    }
-
-    /**
      * 为抛射物设定数据，例如箭、雪球、烈焰球。
      * 本插件只会在 EntityShootBowEvent 中附加属性
      * 如需添加其他请自行添加抛射物
@@ -67,7 +43,7 @@ public class SXAPI {
      */
     public void setProjectileData(UUID uuid, SXAttributeData attributeData) {
         if (attributeData != null && attributeData.isValid()) {
-            SXAttribute.getInst().getAttributeManager().getEntityDataMap().put(uuid, attributeData);
+            SXAttribute.getAttributeManager().getEntityDataMap().put(uuid, attributeData);
         }
     }
 
@@ -78,17 +54,17 @@ public class SXAPI {
      * @return SXAttributeData / null
      */
     public SXAttributeData getProjectileData(UUID uuid) {
-        return SXAttribute.getInst().getAttributeManager().getEntityDataMap().get(uuid);
+        return SXAttribute.getAttributeManager().getEntityDataMap().get(uuid);
     }
 
     /**
      * 获取实体属性数据 更改无效
      *
      * @param livingEntity LivingEntity
-     * @return SXAttributeData / null
+     * @return SXAttributeData
      */
     public SXAttributeData getEntityData(LivingEntity livingEntity) {
-        return SXAttribute.getInst().getAttributeManager().getEntityData(livingEntity);
+        return SXAttribute.getAttributeManager().getEntityData(livingEntity);
     }
 
     /**
@@ -168,7 +144,7 @@ public class SXAPI {
      * @return boolean
      */
     public boolean isUse(LivingEntity entity, EquipmentType type, List<String> list) {
-        return SXAttribute.getInst().getConditionManager().isUse(entity, type, list);
+        return SXAttribute.getConditionManager().isUse(entity, type, list);
     }
 
     /**
@@ -178,27 +154,26 @@ public class SXAPI {
      * @return SXAttributeData
      */
     public SXAttributeData loadListData(List<String> list) {
-        return SXAttribute.getInst().getAttributeManager().loadListData(list);
+        return SXAttribute.getAttributeManager().loadListData(list);
     }
 
-    //TODO 施工
     /**
      * 获取物品的SXAttributeData数据，可以是多个
      * (entity/type 为null 时不进行条件判断)
      * 不满足条件的ItemStack将会在数组内设置为null
      * 如果全部物品都无法识别到属性，那么返回null
      *
-     * @param entity LivingEntity
-     * @param preLoadItems  PreLoadItem[]
+     * @param entity       LivingEntity
+     * @param preLoadItems PreLoadItem[]
      * @return SXAttributeData
      */
     public SXAttributeData loadItemData(LivingEntity entity, PreLoadItem... preLoadItems) {
-        return SXAttribute.getInst().getAttributeManager().loadItemData(entity, Arrays.asList(preLoadItems));
+        return SXAttribute.getAttributeManager().loadItemData(entity, Arrays.asList(preLoadItems));
     }
 
     @Deprecated
     public SXAttributeData loadItemData(LivingEntity entity, ItemStack... items) {
-        return SXAttribute.getAPI().loadItemData(entity, Arrays.stream(items).map(PreLoadItem::new).toArray(PreLoadItem[]::new));
+        return SXAttribute.getApi().loadItemData(entity, Arrays.stream(items).map(PreLoadItem::new).toArray(PreLoadItem[]::new));
     }
 
     /**
@@ -208,7 +183,7 @@ public class SXAPI {
      * @return String
      */
     public String getEntityName(LivingEntity entity) {
-        return SXAttribute.getInst().getOnHealthChangeListener().getEntityName(entity);
+        return SXAttribute.getListenerHealthChange().getEntityName(entity);
     }
 
     /**
@@ -228,7 +203,7 @@ public class SXAPI {
      * @param entity LivingEntity
      */
     public void updateData(LivingEntity entity) {
-        SXAttribute.getInst().getAttributeManager().loadEntityData(entity);
+        SXAttribute.getAttributeManager().loadEntityData(entity);
     }
 
     /**
@@ -237,7 +212,7 @@ public class SXAPI {
      * @param entity LivingEntity
      */
     public void attributeUpdate(LivingEntity entity) {
-        SXAttribute.getInst().getAttributeManager().attributeUpdateEvent(entity);
+        SXAttribute.getAttributeManager().attributeUpdateEvent(entity);
     }
 
     /**
@@ -249,7 +224,7 @@ public class SXAPI {
      * @return ItemStack
      */
     public ItemStack getItem(String itemKey, Player player) {
-        return SXAttribute.getInst().getItemDataManager().getItem(itemKey, player);
+        return SXAttribute.getItemDataManager().getItem(itemKey, player);
     }
 
     public double getMaxHealth(LivingEntity entity) {
@@ -263,7 +238,7 @@ public class SXAPI {
      * @return ItemStack
      */
     public boolean hasItem(String itemKey) {
-        return SXAttribute.getInst().getItemDataManager().hasItem(itemKey);
+        return SXAttribute.getItemDataManager().hasItem(itemKey);
     }
 
     /**
@@ -272,6 +247,6 @@ public class SXAPI {
      * @return Set
      */
     public Set<String> getItemList() {
-        return SXAttribute.getInst().getItemDataManager().getItemList();
+        return SXAttribute.getItemDataManager().getItemList();
     }
 }

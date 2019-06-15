@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author Saukiya
  */
-public class OnHealthChangeListener extends BukkitRunnable implements Listener {
+public class ListenerHealthChange extends BukkitRunnable implements Listener {
 
     @Getter
     private List<BossBarData> bossList = new ArrayList<>();
@@ -44,11 +44,8 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
     @Getter
     private List<HoloData> holoList = new ArrayList<>();
 
-    private SXAttribute plugin;
-
-    public OnHealthChangeListener(SXAttribute plugin) {
-        this.plugin = plugin;
-        runTaskTimer(plugin, 20, 20);
+    public ListenerHealthChange() {
+        runTaskTimer(SXAttribute.getInst(), 20, 20);
     }
 
     @Override
@@ -66,7 +63,7 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
         }
         for (int i = nameList.size() - 1; i >= 0; i--) {
             NameData nameData = nameList.get(i);
-            if (nameData.getEntity() == null || nameData.getEntity().isDead() || nameData.getEntity().getHealth() == SXAttribute.getAPI().getMaxHealth(nameData.getEntity()) || nameData.getClearTime() < System.currentTimeMillis()) {
+            if (nameData.getEntity() == null || nameData.getEntity().isDead() || nameData.getEntity().getHealth() == SXAttribute.getApi().getMaxHealth(nameData.getEntity()) || nameData.getClearTime() < System.currentTimeMillis()) {
                 if (nameData.getEntity() != null) {
                     nameData.getEntity().setCustomName(nameData.getName());
                     nameData.getEntity().setCustomNameVisible(nameData.isVisible());
@@ -106,17 +103,17 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
         for (NameData nameData : nameList) {
             if (entity.equals(nameData.getEntity())) {
                 if (nameData.getName() != null) {
-                    entityName = Message.replaceName(nameData.getName());
+                    entityName = replaceName(nameData.getName());
                 } else {
                     String tempName = entityName;
                     entity.setCustomName(null);
-                    entityName = Message.replaceName(entity.getName());
+                    entityName = replaceName(entity.getName());
                     entity.setCustomName(tempName);
                 }
                 return entityName;
             }
         }
-        return Message.replaceName(entityName);
+        return replaceName(entityName);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -129,7 +126,7 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
         LivingEntity damager = null;
         String name = getEntityName(entity);
 
-        double maxHealth = Math.max(SXAttribute.getAPI().getMaxHealth(entity), 0);
+        double maxHealth = Math.max(SXAttribute.getApi().getMaxHealth(entity), 0);
         double health = Math.min(entity.getHealth() - event.getFinalDamage(), maxHealth);
         double progress = health / maxHealth;
         BossBarData bossBarData = null;
@@ -167,7 +164,7 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
             Location loc = entity.getEyeLocation().clone().add(0, 0.6 - SXAttribute.getRandom().nextDouble() / 2, 0);
             loc.setYaw(entity.getLocation().getYaw() - 90);
             loc.add(loc.getDirection().multiply(0.8D));
-            HoloData holoData = new HoloData(HologramsAPI.createHologram(plugin, loc));
+            HoloData holoData = new HoloData(HologramsAPI.createHologram(SXAttribute.getInst(), loc));
             holoData.getHologram().appendTextLine(Message.getMsg(Message.PLAYER__HOLOGRAPHIC__HURT, event.getFinalDamage()));
 
         }
@@ -208,7 +205,7 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
         if (event.isCancelled() || event.getAmount() == 0 || !(event.getEntity() instanceof LivingEntity) || event.getEntity() instanceof ArmorStand)
             return;
         LivingEntity entity = (LivingEntity) event.getEntity();
-        double maxHealth = Math.max(SXAttribute.getAPI().getMaxHealth(entity), 0);
+        double maxHealth = Math.max(SXAttribute.getApi().getMaxHealth(entity), 0);
         double health = Math.min(entity.getHealth() + event.getAmount(), maxHealth);
         double progress = health / maxHealth;
 
@@ -227,7 +224,7 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
             Location loc = entity.getEyeLocation().clone().add(0, 0.6 - SXAttribute.getRandom().nextDouble() * 1.5, 0);
             loc.setYaw(entity.getLocation().getYaw() + 90);
             loc.add(loc.getDirection().multiply(0.8D));
-            HoloData holoData = new HoloData(HologramsAPI.createHologram(plugin, loc));
+            HoloData holoData = new HoloData(HologramsAPI.createHologram(SXAttribute.getInst(), loc));
             holoData.getHologram().appendTextLine(Message.getMsg(Message.PLAYER__HOLOGRAPHIC__HEALTH, SXAttribute.getDf().format(event.getAmount())));
         }
         for (NameData data : nameList) {
@@ -268,6 +265,24 @@ public class OnHealthChangeListener extends BukkitRunnable implements Listener {
         return healthName.append(Config.getConfig().getString(Config.HEALTH_NAME_SUFFIX)).toString().replace("&", "§");
     }
 
+
+
+    /**
+     * 替换名字
+     *
+     * @param str String
+     * @return String
+     */
+    public static String replaceName(String str) {
+        if (str != null && Message.getMessages().contains(Message.REPLACE_LIST.toString())) {
+            for (String replaceName : Message.getMessages().getConfigurationSection(Message.REPLACE_LIST.toString()).getKeys(false)) {
+                if (str.equals(replaceName)) {
+                    return Message.getMessages().getString(Message.REPLACE_LIST.toString() + "." + replaceName).replace("&", "§");
+                }
+            }
+        }
+        return str;
+    }
 
     @Getter
     public class HoloData {

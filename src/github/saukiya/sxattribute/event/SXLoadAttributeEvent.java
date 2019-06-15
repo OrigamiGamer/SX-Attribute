@@ -12,11 +12,10 @@ import org.bukkit.event.HandlerList;
 import java.util.List;
 
 /**
- * 加载实体物品数据事件
+ * 加载实体属性事件
  *
  * @author Saukiya
  */
-
 @AllArgsConstructor
 @Getter
 @ToString
