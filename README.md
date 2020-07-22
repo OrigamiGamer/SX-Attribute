@@ -6,3 +6,5 @@
 <br>
 
 * [SX-Attribute 2+](https://github.com/Saukiya/SX-Attribute-backup) 
+
+＃欸我好像没时间维护了？有人接手嘛
